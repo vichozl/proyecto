@@ -13,6 +13,8 @@ function App() {
 
   const [editar, setEditar] = useState(false);
   const [id, setId] = useState();
+  const [busqueda, setBusqueda] = useState('');
+
 
   const add = () => {
     Axios.post('http://localhost:3001/create', {
@@ -105,13 +107,37 @@ const deleteMaterial = (id) => {
     });
   };
 
+  const handleSearchChange = (event) => {
+    setBusqueda(event.target.value);
+  };
+  
+  const filteredMateriales = materialesList.filter((val) => {
+    return val.nombre.toLowerCase().includes(busqueda.toLowerCase());
+  });
+  
+
   useEffect(() => {
     getMateriales();
   }, []);
 
   return (
-    <div className="container">
-      <div className="card text-center">
+    <>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <a className="navbar-brand" href="#">EVATEC</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div className="navbar-nav">
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="container mt-4">
+        <div className="card text-center">
+          
         <div className="card-header">
           GESTIÓN DE MATERIALES
         </div>
@@ -197,9 +223,17 @@ const deleteMaterial = (id) => {
             :<button className='btn btn-success' onClick={add}>Registrar</button>
           }
         </div>
-      </div>
+        </div>
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Buscar por nombre..."
+          value={busqueda}
+          onChange={handleSearchChange}
+        />
 
-      <table className="table table-striped">
+        <table className="table table-striped">
+          
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -212,7 +246,7 @@ const deleteMaterial = (id) => {
           </tr>
         </thead>
         <tbody>
-          {materialesList.map((val, key) => {
+          {filteredMateriales.map((val, key) => {
             return (
               <tr key={val.id}>
                 <th scope="row">{val.id}</th>
@@ -235,8 +269,9 @@ const deleteMaterial = (id) => {
             );
           })}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   );
 }
 
